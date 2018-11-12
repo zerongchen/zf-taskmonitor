@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aotain.taskmonitor.dpidevicestatus.mapper.DpiDynamicCpuMapper">
+
+    <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.dpidevicestatus.model.DpiDynamicCpu">
+        <result column="CPU_No" jdbcType="DECIMAL" property="cpuNo" />
+        <result column="CPU_Usage" jdbcType="DECIMAL" property="cpuUsage" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <insert id="saveDpiDynamicCpu" parameterType="com.aotain.taskmonitor.dpidevicestatus.model.DpiDynamicCpu">
+        insert into zf_v2_dev_dpi_dynamic_cpu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cpuNo != null">
+                CPU_No,
+            </if>
+            <if test="cpuUsage != null">
+                CPU_Usage,
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cpuNo != null">
+                #{cpuNo,jdbcType=DECIMAL},
+            </if>
+            <if test="cpuUsage != null">
+                #{cpuUsage,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+
+    </insert>
+
+
+</mapper>

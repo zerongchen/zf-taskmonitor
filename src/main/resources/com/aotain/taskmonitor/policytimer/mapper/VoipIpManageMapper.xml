@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.VoipIpManageMapper">
+
+    <sql id="Base_List">
+        a.VOIPFLOW_ID AS voipflowId,a.MESSAGE_NO AS messageNo,a.MESSAGE_NAME AS messageName,a.INTERFERE_TYPE AS interfereType,
+        a.INTERFERE_DIR AS interfereDir,a.R_STARTTIME AS rStartTime,a.R_ENDTIME AS rEndTime,a.C_TIME AS cTime,a.OPERATE_TYPE AS operationType,
+        a.CREATE_OPER AS createOper,a.MODIFY_OPER AS modifyOper,a.CREATE_TIME AS createTime,a.MODIFY_TIME AS modifyTime
+    </sql>
+
+    <sql id="Base_Column_List">
+        a.VOIPFLOW_ID AS voipflowId,a.MESSAGE_NO AS messageNo,a.MESSAGE_NAME AS messageName,a.INTERFERE_TYPE AS interfereType,
+        a.INTERFERE_DIR AS interfereDir,a.R_STARTTIME AS rStartTime,a.R_ENDTIME AS rEndTime,a.C_TIME AS cTime,a.OPERATE_TYPE AS operationType,
+        a.CREATE_OPER AS createOper,a.MODIFY_OPER AS modifyOper,a.CREATE_TIME AS createTime,a.MODIFY_TIME AS modifyTime,
+        b.user_type AS userType,b.user_names AS userNames,b.user_groupIds AS userGroupIds,
+        c.gw_ips AS gwIp, c.gw_keeperips AS gwKeeperIp
+    </sql>
+
+
+
+    <select id="selectByPrimaryKey" parameterType="com.aotain.common.policyapi.model.VoipFlowStrategy"
+            resultType="com.aotain.common.policyapi.model.VoipFlowStrategy">
+        SELECT
+          <include refid="Base_List"/>
+        FROM zf_v2_voipflow_manage a
+        WHERE a.VOIPFLOW_ID = #{voipFlowId}
+    </select>
+
+    <select id="listData" resultType="com.aotain.common.policyapi.model.VoipFlowStrategy">
+        select
+            <include refid="Base_Column_List"/>
+        from zf_v2_voipflow_manage a
+        INNER JOIN
+          (SELECT VOIPFLOW_ID,user_type,group_concat(USER_NAME) AS user_names,
+                  group_concat(USER_GROUP_ID) AS user_groupIds
+          FROM zf_v2_voipflow_manage_usergroup
+          GROUP BY VOIPFLOW_ID) b
+        ON a.VOIPFLOW_ID = b.VOIPFLOW_ID
+        INNER JOIN
+          (select tmp.VOIPFLOW_ID,group_concat(tmp.gw_ips) AS gw_ips,group_concat(tmp.gw_keeperips) AS gw_keeperips
+          from
+            (select VOIPFLOW_ID, if (VOIP_TYPE=0,group_concat(VOIP_IP),'') AS gw_ips,
+            if (VOIP_TYPE=1,group_concat(VOIP_IP),'') AS gw_keeperips
+            from zf_v2_voipflow_manage_ip
+            group BY VOIPFLOW_ID,VOIP_TYPE
+          ) tmp
+          group BY VOIPFLOW_ID) c
+        ON a.VOIPFLOW_ID = c.VOIPFLOW_ID
+    </select>
+
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="voipFlowId" parameterType="com.aotain.common.policyapi.model.VoipFlowStrategy">
+        insert into zf_v2_voipflow_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="messageNo != null">
+                MESSAGE_NO,
+            </if>
+            <if test="messageName != null">
+                MESSAGE_NAME,
+            </if>
+            <if test="interfereType != null">
+                INTERFERE_TYPE,
+            </if>
+            <if test="interfereDir != null">
+                INTERFERE_DIR,
+            </if>
+            <if test="rStartTime != null">
+                R_STARTTIME,
+            </if>
+            <if test="rEndTime != null">
+                R_ENDTIME,
+            </if>
+            <if test="cTime != null">
+                C_TIME,
+            </if>
+            <if test="operationType != null">
+                OPERATE_TYPE,
+            </if>
+            <if test="createOper != null">
+                CREATE_OPER,
+            </if>
+            <if test="modifyOper != null">
+                MODIFY_OPER,
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME,
+            </if>
+            <if test="modifyTime != null">
+                MODIFY_TIME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="messageNo != null">
+                #{messageNo,jdbcType=DECIMAL},
+            </if>
+            <if test="messageName != null">
+                #{messageName,jdbcType=VARCHAR},
+            </if>
+            <if test="interfereType != null">
+                #{interfereType,jdbcType=DECIMAL},
+            </if>
+            <if test="interfereDir != null">
+                #{interfereDir,jdbcType=DECIMAL},
+            </if>
+            <if test="rStartTime != null">
+                #{rStartTime,jdbcType=DECIMAL},
+            </if>
+            <if test="rEndTime != null">
+                #{rEndTime,jdbcType=DECIMAL},
+            </if>
+            <if test="cTime != null">
+                #{cTime,jdbcType=DECIMAL},
+            </if>
+            <if test="operationType != null">
+                #{operationType,jdbcType=DECIMAL},
+            </if>
+            <if test="createOper != null">
+                #{createOper,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyOper != null">
+                #{modifyOper,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.aotain.common.policyapi.model.VoipFlowStrategy">
+        UPDATE zf_v2_voipflow_manage
+        <set>
+            <if test="messageNo != null">
+                MESSAGE_NO = #{messageNo,jdbcType=DECIMAL},
+            </if>
+            <if test="messageName != null">
+                MESSAGE_NAME = #{messageName,jdbcType=VARCHAR},
+            </if>
+            <if test="interfereType != null">
+                INTERFERE_TYPE = #{interfereType,jdbcType=DECIMAL},
+            </if>
+            <if test="interfereDir != null">
+                INTERFERE_DIR = #{interfereDir,jdbcType=DECIMAL},
+            </if>
+            <if test="rStartTime != null">
+                R_STARTTIME = #{rStartTime,jdbcType=DECIMAL},
+            </if>
+            <if test="rEndTime != null">
+                R_ENDTIME = #{rEndTime,jdbcType=DECIMAL},
+            </if>
+            <if test="cTime != null">
+                C_TIME = #{cTime,jdbcType=DECIMAL},
+            </if>
+            <if test="operationType != null">
+                OPERATE_TYPE = #{operationType,jdbcType=DECIMAL},
+            </if>
+            <if test="createOper != null">
+                CREATE_OPER = #{createOper,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyOper != null">
+                MODIFY_OPER = #{modifyOper,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where VOIPFLOW_ID = #{voipFlowId}
+    </update>
+
+
+    <delete id="deleteData" parameterType="com.aotain.common.policyapi.model.VoipFlowStrategy">
+        UPDATE zf_v2_voipflow_manage
+        <set>
+            <if test="operationType != null ">
+                OPERATE_TYPE = #{operationType},
+            </if>
+            <if test="modifyOper != null ">
+                MODIFY_OPER = #{modifyOper},
+            </if>
+            <if test="modifyTime != null ">
+                MODIFY_TIME = #{modifyTime}
+            </if>
+        </set>
+        where VOIPFLOW_ID = #{voipFlowId}
+    </delete>
+
+    <select id="existSameNameRecord" parameterType="com.aotain.common.policyapi.model.VoipFlowStrategy" resultType="java.lang.Integer">
+        SELECT Count(1) FROM zf_v2_voipflow_manage
+        WHERE OPERATE_TYPE!=3
+        <if test="messageName!=null">
+            AND MESSAGE_NAME =#{messageName}
+        </if>
+        <if test="voipFlowId!=null">
+            AND VOIPFLOW_ID !=#{voipFlowId}
+        </if>
+
+    </select>
+
+    <select id="listInValidPeriodData" parameterType="long" resultType="com.aotain.common.policyapi.model.VoipFlowStrategy">
+        SELECT
+        <include refid="Base_List"/>,
+        b.MESSAGE_SEQUENCENO AS messageSequenceNo,
+        c.gw_ips AS gwIp,
+        c.gw_keeperips AS gwKeeperIp
+        FROM zf_v2_voipflow_manage a
+        LEFT JOIN zf_v2_policy_messageno b ON a.MESSAGE_NO=b.MESSAGE_NO and b.MESSAGE_TYPE=5
+        INNER JOIN
+        (select tmp.VOIPFLOW_ID,group_concat(tmp.gw_ips) AS gw_ips,group_concat(tmp.gw_keeperips) AS gw_keeperips
+        from
+        (select VOIPFLOW_ID, if (VOIP_TYPE=0,group_concat(VOIP_IP),'') AS gw_ips,
+        if (VOIP_TYPE=1,group_concat(VOIP_IP),'') AS gw_keeperips
+        from zf_v2_voipflow_manage_ip
+        group BY VOIPFLOW_ID,VOIP_TYPE
+        ) tmp
+        group BY VOIPFLOW_ID) c
+        ON a.VOIPFLOW_ID = c.VOIPFLOW_ID
+        WHERE a.OPERATE_TYPE!=3 and a.R_STARTTIME &lt;=  #{rStartTime}
+        and (a.R_ENDTIME &gt;= #{rStartTime} or a.R_ENDTIME = 0)
+
+    </select>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.AppFlowManagerMapper">
+  <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.policytimer.model.AppFlowManager">
+    <id column="APPFLOW_ID" jdbcType="BIGINT" property="appFlowId" />
+    <result column="MESSAGE_NO" jdbcType="DECIMAL" property="messageNo" />
+    <result column="MESSAGE_NAME" jdbcType="VARCHAR" property="messageName" />
+    <result column="APPTYPE" jdbcType="DECIMAL" property="apptype" />
+    <result column="APPID" jdbcType="DECIMAL" property="appid" />
+    <result column="APPNAME" jdbcType="VARCHAR" property="appname" />
+    <result column="APP_THRESHOLD_UP_ABS" jdbcType="BIGINT" property="appThresholdUpAbs" />
+    <result column="APP_THRESHOLD_DN_ABS" jdbcType="BIGINT" property="appThresholdDnAbs" />
+    <result column="R_STARTTIME" jdbcType="DECIMAL" property="rStarttime" />
+    <result column="R_ENDTIME" jdbcType="DECIMAL" property="rEndtime" />
+    <result column="C_TIME" jdbcType="BIGINT" property="cTime" />
+    <result column="OPERATE_TYPE" jdbcType="DECIMAL" property="operateType" />
+    <result column="CREATE_OPER" jdbcType="VARCHAR" property="createOper" />
+    <result column="MODIFY_OPER" jdbcType="VARCHAR" property="modifyOper" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    APPFLOW_ID , MESSAGE_NO,MESSAGE_NAME,APPTYPE, APPID, APPNAME, APP_THRESHOLD_UP_ABS, APP_THRESHOLD_DN_ABS,
+    R_STARTTIME, R_ENDTIME, C_TIME, OPERATE_TYPE, CREATE_OPER, MODIFY_OPER, CREATE_TIME, 
+    MODIFY_TIME
+  </sql>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.aotain.taskmonitor.policytimer.model.AppFlowManager">
+    update zf_v2_appflow_manage
+    <set>
+      <if test="messageNo != null">
+        MESSAGE_NO = #{messageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="messageName != null">
+        MESSAGE_NAME = #{messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="apptype != null">
+        APPTYPE = #{apptype,jdbcType=DECIMAL},
+      </if>
+      <if test="appid != null">
+        APPID = #{appid,jdbcType=DECIMAL},
+      </if>
+      <if test="appname != null">
+        APPNAME = #{appname,jdbcType=VARCHAR},
+      </if>
+      <if test="appThresholdUpAbs != null">
+        APP_THRESHOLD_UP_ABS = #{appThresholdUpAbs,jdbcType=BIGINT},
+      </if>
+      <if test="appThresholdDnAbs != null">
+        APP_THRESHOLD_DN_ABS = #{appThresholdDnAbs,jdbcType=BIGINT},
+      </if>
+      <if test="rStarttime != null">
+        R_STARTTIME = #{rStarttime,jdbcType=DECIMAL},
+      </if>
+      <if test="rEndtime != null">
+        R_ENDTIME = #{rEndtime,jdbcType=DECIMAL},
+      </if>
+      <if test="cTime != null">
+        C_TIME = #{cTime,jdbcType=BIGINT},
+      </if>
+      <if test="operateType != null">
+        OPERATE_TYPE = #{operateType,jdbcType=DECIMAL},
+      </if>
+      <if test="createOper != null">
+        CREATE_OPER = #{createOper,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyOper != null">
+        MODIFY_OPER = #{modifyOper,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where APPFLOW_ID = #{appFlowId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    from zf_v2_appflow_manage t
+    WHERE  t.OPERATE_TYPE!=3
+    GROUP BY t.APPFLOW_ID ORDER by t.MODIFY_TIME DESC
+  </select>
+  
+</mapper>

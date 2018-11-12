@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aotain.taskmonitor.dpidevicestatus.mapper.DpiStaticMapper">
+
+    <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.dpidevicestatus.model.DpiStatic">
+        <result column="DeploySiteName" jdbcType="VARCHAR" property="deploySiteName" />
+        <result column="SoftwareVersion" jdbcType="DECIMAL" property="softwareVersion" />
+        <result column="Probe_Type" jdbcType="DECIMAL" property="probeType" />
+        <result column="IDC_HouseID" jdbcType="VARCHAR" property="idcHouseId" />
+        <result column="DEPLOY_MODE" jdbcType="DECIMAL" property="deployMode" />
+        <result column="Total_Capability" jdbcType="DECIMAL" property="totalCapability" />
+        <result column="SlotNum" jdbcType="DECIMAL" property="slotNum" />
+        <result column="PreProcSlotNum" jdbcType="DECIMAL" property="preProcSlotNum" />
+        <result column="AnalysisSlotNum" jdbcType="DECIMAL" property="analysisSlotNum" />
+        <result column="GPSlotNum" jdbcType="DECIMAL" property="gPSlotNum" />
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="createTime" />
+
+
+    </resultMap>
+
+    <insert id="saveDpiStatic" parameterType="com.aotain.taskmonitor.dpidevicestatus.model.DpiStatic">
+        insert into zf_v2_dev_dpi_static
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deploySiteName != null">
+                DeploySiteName,
+            </if>
+            <if test="softwareVersion != null">
+                SoftwareVersion,
+            </if>
+            <if test="probeType != null">
+                Probe_Type,
+            </if>
+            <if test="idcHouseId != null">
+                IDC_HouseID,
+            </if>
+            <if test="deployMode != null">
+                DEPLOY_MODE,
+            </if>
+            <if test="totalCapability != null">
+                Total_Capability,
+            </if>
+            <if test="slotNum != null">
+                SlotNum,
+            </if>
+            <if test="preProcSlotNum != null">
+                PreProcSlotNum,
+            </if>
+            <if test="analysisSlotNum != null">
+                AnalysisSlotNum,
+            </if>
+            <if test="gPSlotNum != null">
+                GPSlotNum,
+            </if>
+            <if test="createTime != null">
+                MODIFY_TIME,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deploySiteName != null">
+                #{deploySiteName,jdbcType=VARCHAR},
+            </if>
+            <if test="softwareVersion != null">
+                #{softwareVersion,jdbcType=DECIMAL},
+            </if>
+            <if test="probeType != null">
+                #{probeType,jdbcType=DECIMAL},
+            </if>
+            <if test="idcHouseId != null">
+                #{idcHouseId,jdbcType=DECIMAL},
+            </if>
+            <if test="deployMode != null">
+                #{deployMode,jdbcType=DECIMAL},
+            </if>
+            <if test="totalCapability != null">
+                #{totalCapability,jdbcType=DECIMAL},
+            </if>
+            <if test="slotNum != null">
+                #{slotNum,jdbcType=DECIMAL},
+            </if>
+            <if test="preProcSlotNum != null">
+                #{preProcSlotNum,jdbcType=DECIMAL},
+            </if>
+            <if test="analysisSlotNum != null">
+                #{analysisSlotNum,jdbcType=DECIMAL},
+            </if>
+            <if test="gPSlotNum != null">
+                #{gPSlotNum,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+
+        </trim>
+    </insert>
+
+    <delete id="deleteDpiStaticByDeploySiteName" parameterType="string">
+        delete from zf_v2_dev_dpi_static
+        WHERE DeploySiteName = #{deploySiteName}
+    </delete>
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.UserPolicyBindMapper">
+ <resultMap id="UserPolicyBindMap" type="com.aotain.common.policyapi.model.UserPolicyBindStrategy">
+    <id column="BIND_ID" jdbcType="BIGINT" property="bindId" />
+    <result column="MESSAGE_NO" jdbcType="DECIMAL" property="messageNo" />
+    <result column="USER_TYPE" jdbcType="DECIMAL" property="userType" />
+    <result column="USER_GROUP_ID" jdbcType="BIGINT" property="userGroupId" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="BIND_MESSAGE_TYPE" jdbcType="DECIMAL" property="userBindMessageType" />
+    <result column="BIND_MESSAGE_NO" jdbcType="DECIMAL" property="userBindMessageNo" />
+    <result column="MESSAGE_SEQUENCENO" jdbcType="DECIMAL" property="messageSequenceNo" />
+    <result column="OPERATE_TYPE" jdbcType="DECIMAL" property="operationType" />
+    <result column="CREATE_OPER" jdbcType="VARCHAR" property="createOper" />
+    <result column="MODIFY_OPER" jdbcType="VARCHAR" property="modifyOper" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  
+  <sql id="userPolicy" >
+    BIND_ID, MESSAGE_NO, USER_TYPE, USER_GROUP_ID, USER_NAME, BIND_MESSAGE_TYPE, BIND_MESSAGE_NO, 
+    MESSAGE_SEQUENCENO, OPERATE_TYPE, CREATE_OPER, MODIFY_OPER, CREATE_TIME, MODIFY_TIME
+  </sql>
+    
+ <insert id="insertSelective" parameterType="com.aotain.common.policyapi.model.UserPolicyBindStrategy">
+    insert into zf_v2_policy_userpolicy_bind
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="bindId != null">
+        BIND_ID,
+      </if>
+      <if test="messageNo != null">
+        MESSAGE_NO,
+      </if>
+      <if test="userType != null">
+        USER_TYPE,
+      </if>
+      <if test="userGroupId != null">
+        USER_GROUP_ID,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="userBindMessageType != null">
+        BIND_MESSAGE_TYPE,
+      </if>
+      <if test="userBindMessageNo != null">
+        BIND_MESSAGE_NO,
+      </if>
+      <if test="messageSequenceNo != null">
+        MESSAGE_SEQUENCENO,
+      </if>
+      <if test="operationType != null">
+        OPERATE_TYPE,
+      </if>
+      <if test="createOper != null">
+        CREATE_OPER,
+      </if>
+      <if test="modifyOper != null">
+        MODIFY_OPER,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="modifyTime != null">
+        MODIFY_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="bindId != null">
+        #{bindId,jdbcType=BIGINT},
+      </if>
+      <if test="messageNo != null">
+        #{messageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=DECIMAL},
+      </if>
+      <if test="userGroupId != null">
+        #{userGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userBindMessageType != null">
+        #{userBindMessageType,jdbcType=DECIMAL},
+      </if>
+      <if test="userBindMessageNo != null">
+        #{userBindMessageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="messageSequenceNo != null">
+        #{messageSequenceNo,jdbcType=DECIMAL},
+      </if>
+      <if test="operationType != null">
+        #{operationType,jdbcType=DECIMAL},
+      </if>
+      <if test="createOper != null">
+        #{createOper,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyOper != null">
+        #{modifyOper,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateOrDelete" parameterType="com.aotain.common.policyapi.model.UserPolicyBindStrategy">
+  	UPDATE zf_v2_policy_userpolicy_bind
+    <set >
+  	    <if test="userType!=null">
+          USER_TYPE = #{userType},
+        </if>
+  		<if test="userName!=null">
+          USER_NAME = #{userName},
+        </if>
+        <if test="operationType!=null">
+          OPERATE_TYPE = #{operationType},
+        </if>
+        <if test="userGroupId!=null">
+          USER_GROUP_ID = #{userGroupId},
+        </if>
+        <if test="messageSequenceNo!=null">
+          MESSAGE_SEQUENCENO = #{messageSequenceNo},
+        </if>
+         <if test="createOper != null">
+	       CREATE_OPER = #{createOper,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifyOper != null">
+	       MODIFY_OPER = #{modifyOper,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createTime != null">
+	       CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifyTime != null">
+	       MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+	     </if>
+    </set>
+    WHERE MESSAGE_NO = #{messageNo} AND OPERATE_TYPE != 3
+    <if test="userBindMessageNo!=null">
+      AND BIND_MESSAGE_NO = #{userBindMessageNo}
+    </if>
+    <if test="userBindMessageType!=null">
+      AND BIND_MESSAGE_TYPE = #{userBindMessageType}
+    </if>
+  </update>
+  
+  <select id="getUserGroupNameById"  parameterType="java.lang.Long" resultType="java.lang.String">
+  SELECT USER_GROUP_NAME
+  FROM zf_v2_usergroup
+  WHERE USER_GROUP_ID = #{id}
+  </select>
+  
+  <select id="getByBindMessages"  parameterType="com.aotain.common.policyapi.model.UserPolicyBindStrategy" resultMap="UserPolicyBindMap">
+  SELECT <include refid="userPolicy"/>
+  FROM zf_v2_policy_userpolicy_bind
+  WHERE 1=1
+    <if test="userBindMessageNo!=null">
+      AND BIND_MESSAGE_NO = #{userBindMessageNo}
+    </if>
+    <if test="userBindMessageType!=null">
+      AND BIND_MESSAGE_TYPE = #{userBindMessageType}
+    </if>
+    ORDER BY BIND_ID
+  </select>
+
+    <select id="getByBindMessageNoAndType"  parameterType="java.util.Map" resultMap="UserPolicyBindMap">
+        SELECT <include refid="userPolicy"/>
+        FROM zf_v2_policy_userpolicy_bind
+        WHERE 1=1
+        <if test="messageNo!=null">
+            AND BIND_MESSAGE_NO = #{messageNo}
+        </if>
+        <if test="userBindMessageType!=null">
+            AND BIND_MESSAGE_TYPE = #{userBindMessageType}
+        </if>
+        <if test="operateType!=null">
+            AND OPERATE_TYPE !=#{operateType}
+        </if>
+    </select>
+  
+</mapper>

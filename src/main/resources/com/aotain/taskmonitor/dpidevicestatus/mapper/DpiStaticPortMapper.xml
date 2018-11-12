@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aotain.taskmonitor.dpidevicestatus.mapper.DpiStaticPortMapper">
+
+    <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.dpidevicestatus.model.DpiStaticPort">
+        <result column="DeploySiteName" jdbcType="VARCHAR" property="deploySiteName" />
+        <result column="PortNo" jdbcType="DECIMAL" property="portNo" />
+        <result column="PortType" jdbcType="DECIMAL" property="portType" />
+
+        <result column="PortDescription" jdbcType="VARCHAR" property="portDescription" />
+        <result column="M_LinkID" jdbcType="DECIMAL" property="mLinkId" />
+        <result column="M_LinkDesc" jdbcType="VARCHAR" property="mLinkDesc" />
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <insert id="saveDpiStaticPort" parameterType="com.aotain.taskmonitor.dpidevicestatus.model.DpiStaticPort">
+        insert into zf_v2_dev_dpi_static_port
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deploySiteName != null">
+                DeploySiteName,
+            </if>
+            <if test="portType != null">
+                PortType,
+            </if>
+            <if test="portNo != null">
+                PortNo,
+            </if>
+            <if test="portDescription != null">
+                PortDescription,
+            </if>
+            <if test="mLinkId != null">
+                M_LinkID,
+            </if>
+            <if test="mLinkDesc != null">
+                M_LinkDesc,
+            </if>
+            <if test="createTime != null">
+                MODIFY_TIME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deploySiteName != null">
+                #{deploySiteName,jdbcType=VARCHAR},
+            </if>
+            <if test="portType != null">
+                #{portType,jdbcType=DECIMAL},
+            </if>
+            <if test="portNo != null">
+                #{portNo,jdbcType=DECIMAL},
+            </if>
+            <if test="portDescription != null">
+                #{portDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="mLinkId != null">
+                #{mLinkId,jdbcType=DECIMAL},
+            </if>
+            <if test="mLinkDesc != null">
+                #{mLinkDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteDpiStaticPortByDeploySiteName" parameterType="string" >
+        DELETE FROM zf_v2_dev_dpi_static_port
+        WHERE DeploySiteName = #{deploySiteName}
+
+    </delete>
+
+</mapper>

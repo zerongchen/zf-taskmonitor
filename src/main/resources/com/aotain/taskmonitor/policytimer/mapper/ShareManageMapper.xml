@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.ShareManageMapper">
+  <resultMap id="BaseResultMap" type="com.aotain.common.policyapi.model.ShareManageStrategy">
+    <id column="SHAREID" jdbcType="INTEGER" property="shareId" />
+    <result column="MESSAGE_NO" jdbcType="DECIMAL" property="messageNo" />
+    <result column="MESSAGE_NAME" jdbcType="VARCHAR" property="messageName" />
+    <result column="CTYPE" jdbcType="DECIMAL" property="ctype" />
+    <result column="C_TIME" jdbcType="DECIMAL" property="time" />
+    <result column="ADV_URL" jdbcType="VARCHAR" property="advUrl" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_OPER" jdbcType="CHAR" property="createOper" />
+    <result column="MODIFY_OPER" jdbcType="CHAR" property="modifyOper" />
+    <result column="DROP_PROTOCOL" jdbcType="DECIMAL" property="dropProtocol" />
+    <result column="OPERATE_TYPE" jdbcType="DECIMAL" property="operationType" />
+    <result column="DROP_RATIO" jdbcType="DECIMAL" property="packetDropRatio" />
+    <result column="R_STARTTIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="R_ENDTIME" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="APP_TYPE_NAME" jdbcType="VARCHAR" property="appTypeName" />
+    <collection property="userGroups" ofType="com.aotain.common.policyapi.model.ShareManageUserGroup" column="SHAREID" select="getUserGroups"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    a.SHAREID, a.C_TYPE, a.C_TIME, a.ADV_URL, a.MODIFY_TIME, a.CREATE_TIME, a.CREATE_OPER, 
+    a.MODIFY_OPER, a.MESSAGE_NO, a.MESSAGE_NAME,a.R_STARTTIME,a.R_ENDTIME,a.OPERATE_TYPE,
+    a.DROP_PROTOCOL, a.DROP_RATIO,c.APP_TYPE_NAME
+  </sql>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aotain.common.policyapi.model.ShareManageStrategy">
+    update zf_v2_share_manage
+    <set>
+      <if test="ctype != null">
+        C_TYPE = #{ctype,jdbcType=DECIMAL},
+      </if>
+      <if test="time != null">
+        C_TIME = #{time,jdbcType=DECIMAL},
+      </if>
+      <if test="advUrl != null">
+        ADV_URL = #{advUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null">
+        OPERATE_TYPE = #{operationType,jdbcType=DECIMAL},
+      </if>
+      <if test="modifyTime != null">
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyOper != null">
+        MODIFY_OPER = #{modifyOper,jdbcType=CHAR},
+      </if>
+      <if test="messageName!=null">
+      	MESSAGE_NAME = #{messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="dropProtocol!=null">
+      	DROP_PROTOCOL=#{dropProtocol,jdbcType=DECIMAL},
+      </if>
+      <if test="packetDropRatio!=null">
+      	DROP_RATIO=#{packetDropRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="messageNo != null">
+      	MESSAGE_NO = #{messageNo,jdbcType=DECIMAL}
+      </if>
+    </set>
+    where SHAREID = #{shareId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getIndexList" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List"/>
+  	FROM zf_v2_share_manage a,
+  		 zf_dict_apptype c
+  	WHERE  a.OPERATE_TYPE != 3
+  	AND a.DROP_PROTOCOL = c.APP_TYPE
+  	<if test="messageName != null and messageName!=''">
+  	AND	a.MESSAGE_NAME LIKE CONCAT("%",#{messageName},"%")
+  	</if>
+  	<if test="startTime != null">
+  	AND date_format(a.CREATE_TIME,'%Y-%m-%d') &gt;= #{startTime}
+  	</if>
+  	<if test="endTime != null">
+  	AND date_format(a.CREATE_TIME,'%Y-%m-%d') &lt;= #{endTime}
+  	</if>
+  	GROUP BY a.SHAREID
+  	ORDER BY a.MODIFY_TIME DESC
+  </select>
+  
+   <select id="getUserGroups" parameterType="java.lang.Integer" resultType="com.aotain.common.policyapi.model.ShareManageUserGroup">
+   	SELECT SHAREID as shareId,
+  		   USER_TYPE as userType,
+  		   USER_GROUP_ID as userGroupId,
+  		   USER_NAME as userName
+  	FROM zf_v2_share_manage_usergroup
+  	WHERE SHAREID = #{shareId}
+   </select>
+</mapper>

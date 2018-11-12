@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.WebFlowManageMapper">
+  <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.policytimer.model.WebFlowManage">
+    <id column="WEBFLOW_ID" jdbcType="INTEGER" property="webflowId" />
+    <result column="MESSAGE_NO" jdbcType="DECIMAL" property="messageNo" />
+    <result column="MESSAGE_NAME" jdbcType="VARCHAR" property="messageName" />
+    <result column="CTYPE" jdbcType="DECIMAL" property="ctype" />
+    <result column="C_TIME" jdbcType="DECIMAL" property="time" />
+    <result column="ADV_URL" jdbcType="VARCHAR" property="advUrl" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_OPER" jdbcType="CHAR" property="createOper" />
+    <result column="MODIFY_OPER" jdbcType="CHAR" property="modifyOper" />
+    <result column="MESSAGE_NO" jdbcType="DECIMAL" property="messageNo" />
+    <result column="R_STARTTIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="R_ENDTIME" jdbcType="TIMESTAMP" property="endTime" />
+    <collection property="webTypes" ofType="com.aotain.taskmonitor.policytimer.model.WebFlowManageWebType" column="WEBFLOW_ID" select="getWebTypes"/>
+    <collection property="userGroup" ofType="com.aotain.taskmonitor.policytimer.model.WebFlowUserGroup" column="WEBFLOW_ID" select="getUserGroups"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    a.WEBFLOW_ID, a.CTYPE, a.C_TIME, a.ADV_URL, a.MODIFY_TIME, a.CREATE_TIME, a.CREATE_OPER, 
+    a.MODIFY_OPER, a.MESSAGE_NO, a.MESSAGE_NAME,a.R_STARTTIME,a.R_ENDTIME,a.OPERATE_TYPE
+  </sql>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.aotain.taskmonitor.policytimer.model.WebFlowManage">
+    update zf_v2_webflow_manage
+    <set>
+      <if test="ctype != null">
+        CTYPE = #{ctype,jdbcType=DECIMAL},
+      </if>
+      <if test="time != null">
+        C_TIME = #{time,jdbcType=DECIMAL},
+      </if>
+      <if test="advUrl != null">
+        ADV_URL = #{advUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operateType != null">
+        OPERATE_TYPE = #{operateType,jdbcType=DECIMAL},
+      </if>
+      <if test="modifyTime != null">
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyOper != null">
+        MODIFY_OPER = #{modifyOper,jdbcType=CHAR},
+      </if>
+      <if test="messageNo != null">
+      	MESSAGE_NO = #{messageNo,jdbcType=DECIMAL}
+      </if>
+    </set>
+    where WEBFLOW_ID = #{webflowId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getIndexList" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List"/>
+  	FROM zf_v2_webflow_manage a
+  	WHERE  a.OPERATE_TYPE != 3
+  	<if test="messageName != null and messageName!=''">
+  	AND	a.MESSAGE_NAME LIKE CONCAT("%",#{messageName},"%")
+  	</if>
+  	GROUP BY a.WEBFLOW_ID
+  	ORDER BY a.MODIFY_TIME DESC
+  </select>
+  
+  <select id="getWebTypes" parameterType="java.lang.Integer" resultType="com.aotain.taskmonitor.policytimer.model.WebFlowManageWebType">
+  	SELECT WEBFLOW_ID as webflowId,
+  		   CWEBTYPE as webType
+  	FROM zf_v2_webflow_manage_webtype
+  	WHERE WEBFLOW_ID = #{webflowId}
+  </select>
+   <select id="getUserGroups" parameterType="java.lang.Integer" resultType="com.aotain.taskmonitor.policytimer.model.WebFlowUserGroup">
+   	SELECT WEBFLOW_ID as webflowId,
+  		   USER_TYPE as userType,
+  		   USER_GROUP_ID as userGroupId,
+  		   USER_NAME as userName
+  	FROM zf_v2_webflow_manage_usergroup
+  	WHERE WEBFLOW_ID = #{webflowId}
+   </select>
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.FlowMirrorMapper">
+
+    <sql id="BASE_COLUMN">
+        a.POLICY_ID AS policyId,a.MESSAGE_NO AS messageNo,a.MAPPTYPE AS appType,a.MAPPID AS appId,a.MAPPNAME AS appName,
+        a.M_STARTTIME AS startTime,a.M_ENDTIME AS endTime,a.M_GROUPNO AS groupNo, a.M_DIRECTION AS direction,
+        a.MFLOWADD AS flowAdd,a.M_CUTLENGTH AS cutLength
+    </sql>
+    <sql id="MESSAGE_NO_COLUMN">
+        b.MESSAGE_NAME AS messageName,b.MESSAGE_SEQUENCENO AS messageSequenceNo,b.OPERATE_TYPE AS operationType,
+        b.CREATE_OPER AS createOper,b.MODIFY_OPER AS modifyOper,b.CREATE_TIME AS createTime,b.MODIFY_TIME AS modifyTime
+    </sql>
+
+    <resultMap id="BASE_MAP" type="com.aotain.common.policyapi.model.FlowMirrorStrategy">
+        <id property="policyId" column="policyId" />
+        <result property="messageNo" column="messageNo" />
+        <result property="appType" column="appType"/>
+        <result property="appId" column="appId"/>
+        <result property="appName" column="appName"/>
+
+        <result property="startTime" column="startTime"/>
+        <result property="endTime" column="endTime"/>
+        <result property="groupNo" column="groupNo"/>
+        <result property="direction" column="direction"/>
+        <result property="flowAdd" column="flowAdd"/>
+        <result property="cutLength" column="cutLength"/>
+
+        <result property="messageName" column="messageName"/>
+        <result property="messageSequenceNo" column="messageSequenceNo"/>
+        <result property="operationType" column="operationType"/>
+        <result property="createOper" column="createOper"/>
+        <result property="modifyOper" column="modifyOper"/>
+        <result property="createTime" column="createTime"/>
+        <result property="modifyTime" column="modifyTime"/>
+        <collection property="bindUser" ofType="com.aotain.common.policyapi.model.UserPolicyBindStrategy" column="messageNo" select="selectBindUsers"/>
+        <collection property="srcIpSegment" ofType="com.aotain.common.policyapi.model.FlowMirrorIpAndPrefix" column="policyId" select="selectSrcIp"/>
+        <collection property="dstIpSegment" ofType="com.aotain.common.policyapi.model.FlowMirrorIpAndPrefix" column="policyId" select="selectDestIp"/>
+        <collection property="srcPort" ofType="com.aotain.common.policyapi.model.FlowMirrorPort" column="policyId" select="selectSrcPort"/>
+        <collection property="destPort" ofType="com.aotain.common.policyapi.model.FlowMirrorPort" column="policyId" select="selectDestPort"/>
+        <collection property="dataMatch" ofType="com.aotain.common.policyapi.model.FlowMirrorMatchContent" column="policyId" select="selectMirrorData"/>
+    </resultMap>
+
+
+    <select id="listInValidPeriodData" parameterType="long" resultMap="BASE_MAP">
+        SELECT
+        <include refid="BASE_COLUMN"/>,
+        <include refid="MESSAGE_NO_COLUMN"/>
+        FROM  zf_v2_policy_flowmirror a
+        INNER JOIN zf_v2_policy_messageno b
+        ON a.MESSAGE_NO = b.MESSAGE_NO and b.MESSAGE_TYPE = 9
+        WHERE b.OPERATE_TYPE != 3 and a.M_STARTTIME &lt;=  #{rStartTime}
+        and (a.M_ENDTIME &gt;= #{rStartTime} or a.M_ENDTIME = 0)
+        ORDER BY a.POLICY_ID DESC
+    </select>
+
+    <!-- SQL语句中以"#{}"的形式引用参数 -->
+    <select id="selectBindUsers" parameterType="map" resultType="com.aotain.common.policyapi.model.UserPolicyBindStrategy">
+        select
+            MESSAGE_NO AS messageNo,
+            USER_TYPE AS userType,
+            USER_GROUP_ID AS userGroupId,
+            USER_NAME AS userName,
+            MESSAGE_SEQUENCENO AS messageSequenceNo
+        from zf_v2_policy_userpolicy_bind
+        where BIND_MESSAGE_NO = #{messageNo} and BIND_MESSAGE_TYPE = 9 and OPERATE_TYPE != 3
+    </select>
+    <select id="selectSrcIp" parameterType="map" resultType="com.aotain.common.policyapi.model.FlowMirrorIpAndPrefix">
+        select IPADDR AS ipAddr,
+        IPPREFIXLEN AS ipPrefixLen
+        from zf_v2_policy_flowmirror_ip
+        where POLICY_ID = #{policyId} and IPTYPE = 0
+    </select>
+    <select id="selectDestIp" parameterType="map" resultType="com.aotain.common.policyapi.model.FlowMirrorIpAndPrefix">
+        select IPADDR AS ipAddr,
+        IPPREFIXLEN AS ipPrefixLen
+        from zf_v2_policy_flowmirror_ip
+        where POLICY_ID = #{policyId} and IPTYPE = 1
+    </select>
+
+    <select id="selectSrcPort" parameterType="map" resultType="com.aotain.common.policyapi.model.FlowMirrorPort">
+        select PORTSTART AS portStart,
+        PORTEND AS portEnd
+        FROM zf_v2_policy_flowmirror_port
+        where POLICY_ID = #{policyId} and PORTTYPE = 0
+    </select>
+    <select id="selectDestPort" parameterType="map" resultType="com.aotain.common.policyapi.model.FlowMirrorPort">
+        select PORTSTART AS portStart,
+        PORTEND AS portEnd
+        FROM zf_v2_policy_flowmirror_port
+        where POLICY_ID = #{policyId} and PORTTYPE = 1
+    </select>
+
+    <select id="selectMirrorData" parameterType="map" resultType="com.aotain.common.policyapi.model.FlowMirrorMatchContent">
+        select MATCHOFFSET AS dataMatchOffset,
+        MATCHCONTENT AS dataMatchContent
+        FROM zf_v2_policy_flowmirror_data
+        where POLICY_ID = #{policyId}
+    </select>
+
+
+    <update id="updateSelective" parameterType="com.aotain.common.policyapi.model.FlowMirrorStrategy">
+        update zf_v2_policy_flowmirror
+        <set>
+            <if test="appType != null">
+                MAPPTYPE = #{appType,jdbcType=DECIMAL},
+            </if>
+            <if test="appId != null">
+                MAPPID = #{appId,jdbcType=DECIMAL},
+            </if>
+            <if test="appName != null">
+                MAPPNAME = #{appName,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                M_STARTTIME= #{startTime,jdbcType=DECIMAL},
+            </if>
+            <if test="endTime != null">
+                M_ENDTIME = #{endTime,jdbcType=DECIMAL},
+            </if>
+            <if test="groupNo != null">
+                M_GROUPNO = #{groupNo,jdbcType=DECIMAL},
+            </if>
+            <if test="direction != null">
+                M_DIRECTION = #{direction,jdbcType=DECIMAL},
+            </if>
+            <if test="flowAdd != null">
+                MFLOWADD = #{flowAdd,jdbcType=DECIMAL},
+            </if>
+            <if test="cutLength != null">
+                M_CUTLENGTH = #{cutLength,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where 1=1
+        <if test="policyId != null ">
+            AND POLICY_ID = #{policyId,jdbcType=DECIMAL}
+        </if>
+        <if test="messageNo != null ">
+            AND MESSAGE_NO = #{messageNo,jdbcType=DECIMAL}
+        </if>
+    </update>
+
+</mapper>

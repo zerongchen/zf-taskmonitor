@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.PolicyMapper">
+  <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.policytimer.model.Policy">
+    <result column="MESSAGE_NO" jdbcType="DECIMAL" property="messageNo" />
+    <result column="MESSAGE_NAME" jdbcType="VARCHAR" property="messageName" />
+    <result column="OPERATE_TYPE" jdbcType="DECIMAL" property="operateType" />
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="MESSAGE_TYPE" jdbcType="DECIMAL" property="messageType" />
+    <result column="FLAG" jdbcType="DECIMAL" property="flag" />
+    <result column="MODIFY_OPER" jdbcType="VARCHAR" property="modifyOper" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="CREATE_OPER" jdbcType="VARCHAR" property="createOper" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="MESSAGE_SEQUENCENO" jdbcType="DECIMAL" property="messageSequenceno" />
+  </resultMap>
+  
+  <sql id="fields">
+    MESSAGE_NO, MESSAGE_NAME, OPERATE_TYPE, MODIFY_TIME,CREATE_TIME,MODIFY_OPER,CREATE_OPER,MESSAGE_SEQUENCENO
+  </sql>
+  
+  <insert id="insertSelective" parameterType="com.aotain.taskmonitor.policytimer.model.Policy">
+    insert into zf_v2_policy_messageno
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="messageNo != null">
+        MESSAGE_NO,
+      </if>
+      <if test="messageName != null">
+        MESSAGE_NAME,
+      </if>
+      <if test="operateType != null">
+        OPERATE_TYPE,
+      </if>
+      <if test="messageType != null">
+        MESSAGE_TYPE,
+      </if>
+      <if test="createOper!=null">
+        CREATE_OPER ,
+      </if>
+      <if test="modifyOper!=null">
+        MODIFY_OPER ,
+      </if>
+      <if test="createTime!=null">
+        CREATE_TIME ,
+      </if>
+      <if test="modifyTime!=null">
+        MODIFY_TIME ,
+      </if>
+      <if test="messageSequenceno!=null">
+        MESSAGE_SEQUENCENO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="messageNo != null">
+        #{messageNo,jdbcType=DECIMAL},
+      </if>
+      <if test="messageName != null">
+        #{messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="operateType != null">
+        #{operateType,jdbcType=DECIMAL},
+      </if>
+      <if test="messageType != null">
+        #{messageType,jdbcType=DECIMAL},
+      </if>
+      <if test="createOper!=null">
+        #{createOper,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyOper!=null">
+        #{modifyOper,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime!=null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime!=null">
+        #{modifyTime,jdbcType=TIMESTAMP} ,
+      </if>
+      <if test="messageSequenceno!=null">
+        #{messageSequenceno,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updatePolicyByMessageNoAndType" parameterType="com.aotain.taskmonitor.policytimer.model.Policy">
+  	update zf_v2_policy_messageno
+  	<set>
+      <if test="messageName!=null">
+        MESSAGE_NAME = #{messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="messageSequenceno!=null">
+      	MESSAGE_SEQUENCENO = #{messageSequenceno},
+      </if>
+      <if test="operateType!=null">
+        OPERATE_TYPE = #{operateType},
+      </if>
+      <if test="modifyTime!=null">
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyOper!=null">
+        MODIFY_OPER = #{modifyOper,jdbcType=VARCHAR},
+      </if>
+    </set>
+     WHERE MESSAGE_TYPE = #{messageType}
+     AND MESSAGE_NO = #{messageNo}
+  </update>
+</mapper>

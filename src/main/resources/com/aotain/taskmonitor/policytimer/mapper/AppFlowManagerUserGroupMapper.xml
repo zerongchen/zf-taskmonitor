@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotain.taskmonitor.policytimer.mapper.AppFlowManagerUserGroupMapper">
+  <resultMap id="BaseResultMap" type="com.aotain.taskmonitor.policytimer.model.AppFlowManagerUserGroup">
+    <result column="APPFLOW_ID" jdbcType="BIGINT" property="appflowId" />
+    <result column="USER_TYPE" jdbcType="DECIMAL" property="userType" />
+    <result column="USER_GROUP_ID" jdbcType="BIGINT" property="userGroupId" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+  </resultMap>
+  
+  
+  <select id="getAppGroup" parameterType="com.aotain.taskmonitor.policytimer.model.AppFlowManagerUserGroup" resultMap="BaseResultMap">
+    SELECT APPFLOW_ID, USER_TYPE, USER_GROUP_ID, USER_NAME FROM zf_v2_appflow_manage_usergroup WHERE APPFLOW_ID =#{appflowId}
+  </select>
+  
+  
+</mapper>

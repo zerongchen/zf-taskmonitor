@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+
+    <!-- 引用common-config下的spring配置 -->
+    <import resource="classpath*:spring-base-policyapi.xml" />
+
+    <!-- 优先使用config下的配置文件，如果不存在则使用classpath下的替补 -->
+<!--    <bean id="placeholderConfigurer4"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="4" />
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="locations">
+            <list>
+                <value>file:${ZF_HOME}/config/monitor.properties</value>
+                <value>file:${ZF_HOME}/config/select.properties</value>
+            </list>
+        </property>
+    </bean>-->
+    <bean id="placeholderConfigurer5"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="4" />
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="locations">
+            <list>
+                <value>classpath:monitor.properties</value>
+                <value>classpath:select.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 自动扫描注解的bean -->
+    <context:component-scan base-package="com.aotain.taskmonitor" />
+    <context:component-scan base-package="com.aotain.common.utils.monitorstatistics" />
+
+
+</beans>
